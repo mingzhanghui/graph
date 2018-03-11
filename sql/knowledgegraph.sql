@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: 2018 年 3 月 11 日 23:06
+-- Generation Time: 2018 年 3 月 11 日 23:31
 -- サーバのバージョン： 10.1.22-MariaDB
 -- PHP Version: 7.1.4
 
@@ -93,7 +93,7 @@ INSERT INTO `node` (`id`, `name`, `href`, `depth`) VALUES
 (12, '面向对象编程', NULL, 1),
 (13, 'Web开发', NULL, 1),
 (14, '开发框架', NULL, 1),
-(15, 'YII', '2', 0),
+(15, 'YII', NULL, 2),
 (16, 'Laravel', NULL, 2),
 (17, 'laravel china', NULL, 3),
 (18, '系统架构', NULL, 1),
