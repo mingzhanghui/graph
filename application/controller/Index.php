@@ -2,6 +2,7 @@
 namespace app\controller;
 
 use app\model\Node;
+use app\model\Link;
 
 class Index {
     public function index() {
@@ -18,4 +19,12 @@ class Index {
         echo $node->getAttr('href');
     }
 
+    public function listLink() {
+        $list = Link::all();
+        for ($i = 0, $n = count($list); $i < $n; $i++) {
+            $list[$i]['desc'] = $list[$i]['des'];
+            unset($list[$i]['des'], $list[$i]['id']);
+        }
+        return $list;
+    }
 }
