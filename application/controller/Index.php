@@ -15,16 +15,62 @@ class Index {
     }
 
     public function getNode($id) {
-        $node = Node::get($id);
-        echo $node->getAttr('href');
+        return Node::get($id);
     }
 
-    public function listLink() {
-        $list = Link::all();
-        for ($i = 0, $n = count($list); $i < $n; $i++) {
-            $list[$i]['desc'] = $list[$i]['des'];
-            unset($list[$i]['des'], $list[$i]['id']);
-        }
+
+    public function listNode() {
+        $list = Node::all();
+        array_walk($list, function($node) {
+           $index = $node['depth'];
+            // $node['course'] = ($index==0) ? 0 : $node['id'];
+           if ($index==0) {
+               $node['course'] = "0";
+               $node['fixed'] = true;
+               $node['href'] = 'http://lib.csdn.net/my/structure/PHP';
+               $node['x'] = 560;
+               $node['y'] = 480;
+           } else {
+               $id = $node['id'];
+               $node['course'] = $id;
+               $node['href'] = 'http://lib.csdn.net/my/structure/PHP/Node/'.$id;  // fixme
+           }
+           $node['index'] = $index;
+           unset($node['depth']);
+
+           $name = $node['name'];
+           unset($node['name']);
+           $node['prop'] = array(
+               'course' => $node['id'],
+               'nText'  => 1,  // fixme
+               'name'   => $name,
+               'subject'=> ''
+           );
+        });
         return $list;
+    }
+
+    /**
+     * node relative id relationship
+     * @return false|static[]
+     */
+    public function listLink() {
+        $nodes = Node::all();
+        $nodeIdList = array();
+        foreach ($nodes as $i => $node) {
+            $nodeIdList[$i] = $node['id'];
+        }
+        unset($nodes);
+        $nodeIdList = array_flip($nodeIdList);
+
+        $links = Link::all();
+        array_walk($links, function($link, $key, $map) {
+            $link['desc'] = $link['des'];
+            unset($link['des'], $link['id']);
+            $link['source'] = $map[$link['source']];
+            $link['target'] = $map[$link['target']];
+        }, $nodeIdList);
+
+        return $links;
     }
 }
