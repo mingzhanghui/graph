@@ -105,9 +105,10 @@ class Index extends Controller {
             array_push($data, [
                 'id'       => $id,
                 'name'     => $node->getAttr('name'),
+                'parentid' => array_key_exists($id, $map) ? $map[$id] : 0,
+                'depth'    => $node->getAttr('depth'),
                 'href'      => is_null($href = $node->getAttr('href')) ?
-                    'structure.html?structid='.$this->structid.'&node='.$id : $href,
-                'parentid' => array_key_exists($id, $map) ? $map[$id] : 0
+                    'structure.html?structid='.$this->structid.'&node='.$id : $href
             ]);
         }
         unset($nodes);
