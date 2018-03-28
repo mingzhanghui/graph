@@ -16,6 +16,10 @@ SET time_zone = "+00:00";
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8mb4 */;
 
+create database if not exists `knowledgegraph`;
+
+use `knowledgegraph`;
+
 --
 -- Database: `knowledgegraph`
 --
@@ -25,6 +29,7 @@ SET time_zone = "+00:00";
 --
 -- Table structure for table `content`
 --
+drop table if exists `content`;
 
 CREATE TABLE `content` (
   `id` int(11) NOT NULL,
@@ -48,6 +53,7 @@ INSERT INTO `content` (`id`, `nodeid`, `name`, `url`) VALUES
 --
 -- Table structure for table `link`
 --
+drop table if exists `link`;
 
 CREATE TABLE `link` (
   `id` int(11) NOT NULL COMMENT 'auto_increment id',
@@ -88,6 +94,8 @@ INSERT INTO `link` (`id`, `des`, `source`, `target`, `type`, `structid`) VALUES
 --
 -- Table structure for table `node`
 --
+
+drop table if exists `node`;
 
 CREATE TABLE `node` (
   `id` int(11) NOT NULL COMMENT 'auto_increment id',
