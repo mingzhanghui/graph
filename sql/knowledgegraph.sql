@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.5.2
+-- version 4.5.1
 -- http://www.phpmyadmin.net
 --
--- Host: localhost
--- Generation Time: Mar 25, 2018 at 05:01 PM
--- Server version: 10.1.10-MariaDB
--- PHP Version: 7.0.2
+-- Host: 127.0.0.1
+-- Generation Time: Mar 29, 2018 at 11:36 AM
+-- Server version: 10.1.13-MariaDB
+-- PHP Version: 5.6.21
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -16,10 +16,6 @@ SET time_zone = "+00:00";
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8mb4 */;
 
-create database if not exists `knowledgegraph`;
-
-use `knowledgegraph`;
-
 --
 -- Database: `knowledgegraph`
 --
@@ -29,7 +25,6 @@ use `knowledgegraph`;
 --
 -- Table structure for table `content`
 --
-drop table if exists `content`;
 
 CREATE TABLE `content` (
   `id` int(11) NOT NULL,
@@ -43,17 +38,21 @@ CREATE TABLE `content` (
 --
 
 INSERT INTO `content` (`id`, `nodeid`, `name`, `url`) VALUES
-(1, 4, 'XAMPP', 'https://www.apachefriends.org/index.html'),
-(2, 4, ' LAMP environment', 'http://wiki.jikexueyuan.com/project/linux/lamp.html'),
+(1, 4, 'sed', 'http://man.linuxde.net/sed'),
+(2, 3, ' LAMP environment', 'http://wiki.jikexueyuan.com/project/linux/lamp.html'),
 (3, 7, 'eclipse', 'https://www.eclipse.org/downloads/'),
-(4, 7, 'phpstorm', 'https://www.jetbrains.com/phpstorm/');
+(4, 7, 'phpstorm', 'https://www.jetbrains.com/phpstorm/'),
+(5, 5, 'mysql official website', 'https://www.mysql.com/'),
+(6, 6, 'php official website', 'http://jp2.php.net/'),
+(7, 8, ' json online format', 'https://www.bejson.com/'),
+(8, 21, 'apache website', 'http://apache.org/'),
+(9, 4, 'awk', 'http://www.runoob.com/linux/linux-comm-awk.html');
 
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `link`
 --
-drop table if exists `link`;
 
 CREATE TABLE `link` (
   `id` int(11) NOT NULL COMMENT 'auto_increment id',
@@ -87,15 +86,14 @@ INSERT INTO `link` (`id`, `des`, `source`, `target`, `type`, `structid`) VALUES
 (16, '', 14, 16, 'REL', 1),
 (17, '', 16, 17, 'REL', 1),
 (18, '', 1, 18, 'REL', 1),
-(19, '', 1, 19, 'REL', 1);
+(19, '', 1, 19, 'REL', 1),
+(20, '', 3, 21, 'REL', 1);
 
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `node`
 --
-
-drop table if exists `node`;
 
 CREATE TABLE `node` (
   `id` int(11) NOT NULL COMMENT 'auto_increment id',
@@ -129,7 +127,8 @@ INSERT INTO `node` (`id`, `name`, `href`, `depth`, `structid`) VALUES
 (17, 'laravel china', NULL, 3, 1),
 (18, '系统架构', NULL, 1, 1),
 (19, '代码片', NULL, 1, 1),
-(20, 'JAVA', 'http://lib.csdn.net/my/structure/JAVA%20', 0, 2);
+(20, 'JAVA', 'http://lib.csdn.net/my/structure/JAVA%20', 0, 2),
+(21, 'apache', NULL, 3, 1);
 
 -- --------------------------------------------------------
 
@@ -188,17 +187,17 @@ ALTER TABLE `structure`
 -- AUTO_INCREMENT for table `content`
 --
 ALTER TABLE `content`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 --
 -- AUTO_INCREMENT for table `link`
 --
 ALTER TABLE `link`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'auto_increment id', AUTO_INCREMENT=20;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'auto_increment id', AUTO_INCREMENT=21;
 --
 -- AUTO_INCREMENT for table `node`
 --
 ALTER TABLE `node`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'auto_increment id', AUTO_INCREMENT=21;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'auto_increment id', AUTO_INCREMENT=22;
 --
 -- AUTO_INCREMENT for table `structure`
 --

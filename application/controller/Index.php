@@ -1,6 +1,7 @@
 <?php
 namespace app\controller;
 
+use app\model\Content;
 use app\model\Node;
 use app\model\Link;
 use think\Controller;
@@ -84,7 +85,7 @@ class Index extends Controller {
 
     /**
      * http://lib.csdn.net/my/structure/PHP
-     * 收藏列表
+     * node树形结构列表
      * http://localhost/d3.js/graph/public/index.php/Index/nodeTree?structid=1
      */
     public function nodeTree() {
@@ -114,6 +115,26 @@ class Index extends Controller {
         unset($nodes);
 
         return Link::buildTree($data);
+    }
+
+    /**
+     * 当前节点，以及所有子节点(2层)对应的知识点内容
+     * http://localhost:8000/d3.js/graph/public/index.php/Index/getContentByNodeId?nodeid=3
+     */
+    public function getContentByNodeId() {
+        $nodeid = $this->request->param('nodeid');
+        $content = new Content();
+        $a = $content->getContentByNodeId($nodeid);
+
+        $link = new Link();
+        $childId = $link->listChildNodeId_r($nodeid);
+        $list = $content->getContentByNodeIdList($childId);
+
+        return array_merge($a, $list);
+    }
+
+    public function test() {
+        \think\Config::set('default_return_type','html');
     }
 
 }

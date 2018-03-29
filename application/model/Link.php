@@ -49,4 +49,33 @@ class Link extends Model {
         }
         return $childs[0];
     }
+
+    /**
+     * 节点id下一级节点id数组
+     */
+    public function listChildNodeId_r($nodeid) {
+        $a = $this->listChildNodeId($nodeid);
+        $list = [];  // recursively
+        foreach ($a as $it) {
+            array_push($list, $it);
+            $ca = $this->listChildNodeId($it);
+            foreach ($ca as $ci) {
+                array_push($list, $ci);
+            }
+        }
+        return $list;
+    }
+
+    // 节点id下一级节点id数组
+    private function listChildNodeId($parentid) {
+        $where = ['source' => $parentid];
+        $a = $this->field('target')->where($where)->select();
+        $t = [];
+        foreach ($a as $item) {
+            array_push($t, $item['target']);
+        }
+        unset($a);
+        return $t;
+    }
+
 }
