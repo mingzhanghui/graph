@@ -84,6 +84,29 @@ class Index extends Controller {
     }
 
     /**
+     * 图谱名称, root node url, 内容条数
+     */
+    public function structInfo() {
+        $node = Node::get([
+            'depth' => 0,
+            'structid' => $this->structid,
+        ]);
+
+        $nodes = Node::all(['structid' => $this->structid]);
+        $n = 0;
+        $content = new Content();
+        foreach($nodes as $v) {
+            $nodeid = $v->getAttr('id');
+            $n += $content->where('nodeid', $nodeid)->count();
+        }
+        return [
+            'title' => $node->getAttr('name'),
+            'url'   => $node->getAttr('href'),
+            'n'     => $n
+        ];
+    }
+
+    /**
      * http://lib.csdn.net/my/structure/PHP
      * node树形结构列表
      * http://localhost/d3.js/graph/public/index.php/Index/nodeTree?structid=1
@@ -131,6 +154,59 @@ class Index extends Controller {
         $list = $content->getContentByNodeIdList($childId);
 
         return array_merge($a, $list);
+    }
+
+    /**
+     * 在nodeid节点下添加内容
+     * @return array
+     */
+    public function contentAdd() {
+        $content = new Content;
+        $content->nodeid = $this->request->param('nodeid');
+        $content->name = $this->request->param('name');
+        $content->url = $this->request->param('url');
+        $content->save();
+        return ['id' => $content->id];  // get last insert id
+    }
+
+    /**
+     * 删除一条知识内容
+     * @param $id  int
+     * @return array
+     */
+    public function contentDel($id) {
+        // $id = $this->request->param('id');
+        return [
+            'id'   => $id,
+            'count'=> Content::destroy($id)
+        ];
+    }
+
+    /**
+     * 编辑知识内容
+     */
+    public function contentEdit() {
+        $id = $this->request->param('id');
+        $name = $this->request->param('name');
+        $url = $this->request->param('url');
+
+        $content = Content::get($id);
+        $content->name = $name;
+        $content->url = $url;
+        return ['c' => $content->save()];
+    }
+
+    /**
+     * 移动知识内容
+     */
+    public function contentMove() {
+        $id = $this->request->param('id');
+        $nodeid = $this->request->param('nodeid');
+        $content = new Content();
+        $c = $content->save([
+            'nodeid' => $nodeid
+        ], ['id' => $id]);
+        return ['c' => $c];
     }
 
     public function test() {
