@@ -11,6 +11,6 @@ use think\Model;
 
 class Node extends Model {
     protected $pk = 'id';
-    protected $field = ['name', 'href', 'depth'];
+    protected $field = ['name', 'href', 'depth', 'structid'];
 
 }
