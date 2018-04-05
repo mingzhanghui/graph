@@ -16,30 +16,29 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `node`
+-- Table structure for table `content`
 --
 
-DROP TABLE IF EXISTS `node`;
+DROP TABLE IF EXISTS `content`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `node` (
-  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'auto_increment id',
-  `name` varchar(64) NOT NULL COMMENT 'node name',
-  `href` varchar(255) DEFAULT NULL COMMENT 'node url',
-  `depth` int(11) NOT NULL COMMENT 'node depth (index), depth=0 represents root node of a structure',
-  `structid` int(11) NOT NULL COMMENT 'root node id',
+CREATE TABLE `content` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `nodeid` int(11) NOT NULL,
+  `name` varchar(32) CHARACTER SET utf8 NOT NULL COMMENT '知识内容名称',
+  `url` varchar(256) NOT NULL COMMENT '知识内容URL',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=latin1 COMMENT='结点下面对应的知识内容';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `node`
+-- Dumping data for table `content`
 --
 
-LOCK TABLES `node` WRITE;
-/*!40000 ALTER TABLE `node` DISABLE KEYS */;
-INSERT INTO `node` VALUES (1,'PHP','structure.html?structid=1&nodeid=1&name=PHP',0,1),(2,'Development Environment',NULL,1,1),(3,'LAMP environment',NULL,2,1),(4,'linux',NULL,3,1),(5,'mysql',NULL,3,1),(6,'php',NULL,3,1),(7,'IDE',NULL,2,1),(8,'Tools',NULL,2,1),(9,'基础知识',NULL,1,1),(10,'常用扩展',NULL,1,1),(11,'格式解析',NULL,1,1),(12,'面向对象编程',NULL,1,1),(13,'Web开发',NULL,1,1),(14,'开发框架',NULL,1,1),(15,'YII',NULL,2,1),(16,'Laravel',NULL,2,1),(17,'laravel china',NULL,3,1),(18,'系统架构',NULL,1,1),(19,'代码片',NULL,1,1),(20,'JAVA','http://lib.csdn.net/my/structure/JAVA%20',0,2),(21,'apache',NULL,3,1);
-/*!40000 ALTER TABLE `node` ENABLE KEYS */;
+LOCK TABLES `content` WRITE;
+/*!40000 ALTER TABLE `content` DISABLE KEYS */;
+INSERT INTO `content` VALUES (1,4,'sed','http://man.linuxde.net/sed'),(2,3,'LAMP极客学院','http://wiki.jikexueyuan.com/project/linux/lamp.html'),(3,7,'eclipse','https://www.eclipse.org/downloads/'),(4,7,'phpstorm','https://www.jetbrains.com/phpstorm/'),(5,5,'mysql official website','https://www.mysql.com/'),(6,6,'php official website','http://jp2.php.net/'),(7,8,' json online format','https://www.bejson.com/'),(8,21,'apache website','http://apache.org/'),(9,4,'awk','http://www.runoob.com/linux/linux-comm-awk.html'),(17,7,'emacs','http://www.gnu.org/software/emacs/'),(18,22,'Intellij Idea','https://www.jetbrains.com/idea/'),(19,4,'vim','https://www.vim.org'),(20,17,'关于 Laravel China','https://laravel-china.org/about');
+/*!40000 ALTER TABLE `content` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -51,4 +50,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-04-05 22:54:33
+-- Dump completed on 2018-04-05 22:55:11

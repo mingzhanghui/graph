@@ -25,6 +25,29 @@ class Index extends Controller {
     }
 
     /**
+     * list structure name & content count
+     * @return false|static[]
+     */
+    public function listStructures() {
+        $list = Structure::all();
+        foreach ($list as $i => $struct) {
+            $structid = $struct->getAttr('id');
+            $nodelist = Node::all(['structid' => $structid]);
+            $nodeids = [];
+            foreach ($nodelist as $node) {
+                array_push($nodeids, $node->getAttr('id'));
+            }
+            $content = new Content();
+            $cc = 0;
+            foreach($nodeids as $nodeid) {
+                $cc += $content->where('nodeid', $nodeid)->count();
+            }
+            $list[$i]->setAttr('count', $cc);
+        }
+        return $list;
+    }
+
+    /**
      * 用于图谱预览: 列出所有节点
      * @return false|static[]
      */
@@ -100,9 +123,11 @@ class Index extends Controller {
             $nodeid = $v->getAttr('id');
             $n += $content->where('nodeid', $nodeid)->count();
         }
+        $struct = Structure::get($this->structid);
         return [
             'title' => $node->getAttr('name'),
             'url'   => $node->getAttr('href'),
+            'info'  => $struct->getAttr('info'),
             'n'     => $n
         ];
     }
@@ -138,7 +163,8 @@ class Index extends Controller {
         }
         unset($nodes);
 
-        return Link::buildTree($data);
+        $a = Link::buildTree($data);
+        return $a[0];
     }
 
     /**
