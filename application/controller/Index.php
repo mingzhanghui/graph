@@ -119,16 +119,24 @@ class Index extends Controller {
         $nodes = Node::all(['structid' => $this->structid]);
         $n = 0;
         $content = new Content();
+
+        $rootid = 0;
         foreach($nodes as $v) {
             $nodeid = $v->getAttr('id');
             $n += $content->where('nodeid', $nodeid)->count();
+
+            $depth = $v->getAttr('depth');
+            if (0==$depth) {
+                $rootid = $nodeid;
+            }
         }
         $struct = Structure::get($this->structid);
         return [
             'title' => $node->getAttr('name'),
             'url'   => $node->getAttr('href'),
             'info'  => $struct->getAttr('info'),
-            'n'     => $n
+            'n'     => $n,
+            'rootid'=> $rootid
         ];
     }
 
