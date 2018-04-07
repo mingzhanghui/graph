@@ -44,6 +44,7 @@ class Index extends Controller {
             }
             $list[$i]->setAttr('count', $cc);
         }
+
         return $list;
     }
 
@@ -57,14 +58,14 @@ class Index extends Controller {
         array_walk($list, function($node, $key, $structid) {
             $index = $node['depth'];
             // $node['course'] = ($index==0) ? 0 : $node['id'];
+            $id = $node['id'];
             if ($index==0) {
                 $node['course'] = "0";
                 $node['fixed'] = true;
                 $node['href'] = 'structure.html?structid='.$structid;
-                $node['x'] = 560;
-                $node['y'] = 480;
+                $node['x'] = 560;  // root node position x
+                $node['y'] = 480;  // root node position y
             } else {
-                $id = $node['id'];
                 $node['course'] = $id;
                 $node['href'] = 'structure.html?structid='.$structid.'&node='.$id;  // fixme
             }
@@ -73,9 +74,17 @@ class Index extends Controller {
 
             $name = $node['name'];
             unset($node['name']);
+
+            // sum node contents count
+            $content = new Content();
+            $link = new Link();
+            $childId = $link->listChildNodeId_r($id);
+            $list = $content->getContentByNodeIdList($childId);
+            $a = $content->getContentByNodeIdList([$id]);
+
             $node['prop'] = array(
                 'course' => $node['id'],
-                'nText'  => 1,  // fixme
+                'nTxt'  => count($list)+count($a),
                 'name'   => $name,
                 'subject'=> ''
             );
@@ -95,13 +104,14 @@ class Index extends Controller {
         }
         unset($nodes);
         $nodeIdList = array_flip($nodeIdList);
-
         $links = Link::all(['structid' => $this->structid]);
+
         array_walk($links, function($link, $key, $map) {
             $link['desc'] = $link['des'];
             unset($link['des'], $link['id']);
             $link['source'] = $map[$link['source']];
             $link['target'] = $map[$link['target']];
+            $link['type'] = 'REL';
         }, $nodeIdList);
 
         return $links;
@@ -135,6 +145,7 @@ class Index extends Controller {
             'title' => $node->getAttr('name'),
             'url'   => $node->getAttr('href'),
             'info'  => $struct->getAttr('info'),
+            'time'  => $struct->getAttr('update_time'),
             'n'     => $n,
             'rootid'=> $rootid
         ];
@@ -165,7 +176,7 @@ class Index extends Controller {
                 'name'     => $node->getAttr('name'),
                 'parentid' => array_key_exists($id, $map) ? $map[$id] : 0,
                 'depth'    => $node->getAttr('depth'),
-                'href'      => is_null($href = $node->getAttr('href')) ?
+                'href'     => is_null($href = $node->getAttr('href')) ?
                     'structure.html?structid='.$this->structid.'&node='.$id : $href
             ]);
         }
@@ -181,6 +192,7 @@ class Index extends Controller {
      */
     public function getContentByNodeId() {
         $nodeid = $this->request->param('nodeid');
+
         $content = new Content();
         $a = $content->getContentByNodeId($nodeid);
 
@@ -327,11 +339,28 @@ class Index extends Controller {
     }
 
     /**
+     * prepare 删除知识图谱
+     * @return array
+     */
+    public function promptDeleteStructure() {
+        $structid = $this->structid;
+        $title = urldecode($this->request->get('title'));
+        $struct = Structure::get($structid);
+
+        $ret = ['code'=>1, 'msg'=>'图谱名称不符'];
+        if ($struct->getAttr('name')==$title) {
+            $a = $this->deleteStructure($structid);
+            $ret['code'] = 0;
+            $ret['msg'] = json_encode($a);
+            return $ret;
+        }
+        return $ret;
+    }
+    /**
      * 删除知识图谱 返回每个数据表删除的条数
      * {"content":1,"link":9,"node":10,"structure":1}
      */
-    public function deleteStructure() {
-        $structid = $this->structid;
+    private function deleteStructure($structid) {
         // content
         $nodes = Node::all(['structid' => $structid]);
         $getlistid = function() use (&$nodes) {
@@ -343,13 +372,15 @@ class Index extends Controller {
         };
         $nodeids = $getlistid();
 
-        // content
-        $n0 = 0;
+
+        $n0 = 0; $n1 = 0;
         foreach ($nodeids as $nodeid) {
+            // content
             $n0 += Content::destroy(['nodeid' => $nodeid]);
+            // link
+            $n1 += Link::destroy(['target' => $nodeid]);
         }
-        // link
-        $n1 = Link::destroy(['structid' => $structid]);
+        // $n1 = Link::destroy(['structid' => $structid]);
         // node
         $n2 = 0;
         foreach ($nodeids as $id) {
@@ -369,8 +400,160 @@ class Index extends Controller {
 
     /**
      * 编辑图谱
+     * 新增node     {"title": "php",	"status": true} 该node没有"nid"字段表示是新增的node, 有status=true
+     * 修改node名称 {"title": "linux111", "nid": 19046942,"status": true}, 带有nid字段，这个节点在数据库node表中的id，和status=true
+     * node不变     {"title": "apache","nid": 19046943} 有nid字段，没有status字段
      */
     public function editStructure() {
+        $d = $this->request->post('treedata');
+        $treedata = json_decode($d, true);
+        $structid = $this->structid;
 
+        $rootid = $treedata['nid'];
+        $title = $treedata['title'];
+
+        // Structure
+        $struct = Structure::get($structid);
+        $struct->name = $title;
+        $struct->info = $treedata['description'];
+        $struct->save();
+
+        // Node
+        $root = new Node();
+        $root->save(['name'=>$title], ['id' => $rootid]);
+
+        $dom1s = $treedata['dom'];
+        // depth=1
+        foreach ($dom1s as $dom1) {
+            // node changed?
+            if (array_key_exists('status', $dom1) && $dom1['status']=="true") {
+                if (array_key_exists('nid', $dom1)) {
+                    // update node
+                    $nid1 = $dom1['nid'];
+                    $node1 = Node::get($nid1);
+                    $node1->name = $dom1['title'];
+                    $node1->save();
+                } else {
+                    // insert node
+                    $node1 = Node::create([
+                        'name'  => $dom1['title'],
+                        'depth' => 1,
+                        'structid' => $structid
+                    ]);
+                    $nid1 = $node1->id;   // last insert id
+                    // insert link
+                    Link::create([
+                        'source' => $rootid,
+                        'target' => $nid1,
+                        'structid' => $structid
+                    ]);
+                }
+            } else {
+                $nid1 = $dom1['nid'];
+            }
+            // depth = 2
+            if (array_key_exists('dom', $dom1)) foreach ($dom1['dom'] as $dom2) {
+                // node changed?
+                if (array_key_exists('status', $dom2) && $dom2['status']=="true") {
+                    if (array_key_exists('nid', $dom2)) {
+                        // update node
+                        $nid2 = $dom2['nid'];
+                        $node2 = Node::get($nid2);
+                        $node2->name = $dom2['title'];
+                        $node2->save();
+                    } else {
+                        // insert Node
+                        $node2 = Node::create([
+                            'name' => $dom2['title'],
+                            'depth' => 2,
+                            'structid' => $structid
+                        ]);
+                        $nid2 = $node2->id;
+                        Link::create([
+                            'source' => $nid1,
+                            'target' => $nid2,
+                            'structid' => $structid
+                        ]);
+                    }
+                } else {
+                    $nid2 = $dom2['nid'];
+                }
+                // depth = 3
+                if (array_key_exists('dom', $dom2)) foreach ($dom2['dom'] as $dom3) {
+                    // node changed?
+                    if (array_key_exists('status', $dom3) && $dom3['status']=="true") {
+                       if (array_key_exists('nid', $dom3)) {
+                           $nid3 = $dom3['nid'];
+                           $node3 = Node::get($nid3);
+                           $node3->name = $dom3['title'];
+                           $node3->save();
+                       } else {
+                           $node3 = Node::create([
+                               'name' => $dom3['title'],
+                               'depth' => 3,
+                               'structid' => $structid
+                           ]);
+                           $nid3 = $node3->id;
+                           Link::create([
+                               'source' => $nid2,
+                               'target' => $nid3,
+                               'structid' => $structid
+                           ]);
+                       }
+                    }
+                    // else {$nid3 = $dom3['nid'];}
+                }
+            }
+        }
+        return ['code'=>0, 'msg'=>'success'];
+    }
+
+    /**
+     * prepare delete node  这个node以及child nodes关联有知识内容content ? 不能删除 : 直接删除node，不等到按提交按钮
+     */
+    public function deleteNode() {
+        $ret = ['code'=>0, 'count'=>0, 'contents' => []];
+
+        $nodeid = $this->request->get("nodeid");
+
+        $content = new Content();
+        $a = $content->getContentByNodeId($nodeid);
+
+        $link = new Link();
+        $childId = $link->listChildNodeId_r($nodeid);
+        $list = $content->getContentByNodeIdList($childId);
+
+        $contents = array_merge($a, $list);
+        // 该节点下仍保存有相关知识内容, 削除不可.
+        if (0<count($contents)) {
+            $ret['code'] = 1;  // operation
+            $ret['contents'] = $list;
+            return $ret;
+        }
+        array_push($childId, intval($nodeid));
+        $ret['nodeIdList'] = $childId;
+
+        return $ret;
+    }
+
+    /**
+     * do delete nodes
+     */
+    public function doDelNodes() {
+        $c = $this->request->post('nodeIdList');
+        $ret = ['code'=>0, 'count'=>0];
+
+        $childId = json_decode($c);
+        if (is_array($childId)) {
+            foreach ($childId as $id) {
+                // delete links
+                Link::destroy(['target' => $id]);
+                // delete nodes
+                $ret['count'] += Node::destroy($id);
+            }
+        } else {
+            $ret['code'] = 1;  // Unexpected nodeid list
+        }
+        return $ret;
     }
 }

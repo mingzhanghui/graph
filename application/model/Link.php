@@ -5,7 +5,7 @@ use think\Model;
 
 class Link extends Model {
     protected $pk = 'id';
-    protected $field = ['des', 'source', 'target', 'type', 'structid'];
+    protected $field = ['des', 'source', 'target', 'structid'];
 
 
     /**
