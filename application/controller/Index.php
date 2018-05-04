@@ -29,7 +29,9 @@ class Index extends Controller {
      * @return false|static[]
      */
     public function listStructures() {
-        $list = Structure::all();
+        $list = Structure::all(function($query) {
+            $query->order('id', 'desc');
+        });
         foreach ($list as $i => $struct) {
             $structid = $struct->getAttr('id');
             $nodelist = Node::all(['structid' => $structid]);
@@ -63,8 +65,8 @@ class Index extends Controller {
                 $node['course'] = "0";
                 $node['fixed'] = true;
                 $node['href'] = 'structure.html?structid='.$structid;
-                $node['x'] = 560;  // root node position x
-                $node['y'] = 480;  // root node position y
+                $node['x'] = 500;  // root node position x
+                $node['y'] = 400;  // root node position y
             } else {
                 $node['course'] = $id;
                 $node['href'] = 'structure.html?structid='.$structid.'&node='.$id;  // fixme
