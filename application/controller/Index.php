@@ -266,6 +266,17 @@ class Index extends Controller {
         $tree = json_decode($data, true);
 
         $rootname = $tree['title'];
+        // \think\Config::set('default_return_type','html');
+        $count = Structure::where('name', $rootname)->count();
+        if (0 < $count) {
+            return [
+                'status' => 1,
+                'id'    => 0,
+                'title' => $rootname,
+                'err'   => '图谱名称'.$rootname.'已存在',
+                'url'   => ''
+            ];
+        }
 
         $struct = new Structure();
         $struct->name = $rootname;
