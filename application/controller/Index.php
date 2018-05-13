@@ -427,7 +427,15 @@ class Index extends Controller {
 
         // Structure
         $struct = Structure::get($structid);
-        $struct->name = $title;
+        // structure name has changed
+        if (strcmp($struct->name, $title)!==0) {
+            $s = Structure::get(['name'=>$title]);
+            if (is_null($s)) {
+                $struct->name = $title;  // update structure name
+            } else {
+                return ['code'=>1, 'msg'=>'图谱名称已存在#'.$s->id];
+            }
+        }
         $struct->info = $treedata['description'];
         $struct->save();
 
