@@ -25,6 +25,12 @@ class Content extends Model {
         return $list;
     }
 
+    public function countContentByNodeId($nodeid) {
+        $where = ['nodeid' => $nodeid];
+        return $this->where($where)->count();
+    }
+
+
     /**
      * 取得nodeid数组对应的content记录
      */

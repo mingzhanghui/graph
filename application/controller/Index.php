@@ -206,6 +206,33 @@ class Index extends Controller {
     }
 
     /**
+     * 当前节点(包括下面2级子节点)下的内容计数
+     * node id => count content
+     */
+    public function countContentByNodeIdList() {
+        $sa = $this->request->post('a');
+        $a = json_decode($sa);
+        $content = new Content();
+        $link = new Link();
+
+        $ca = [];
+
+        foreach ($a as $nodeid) {
+            $childId = $link->listChildNodeId_r($nodeid);
+            if (count($childId)<1) {
+                array_push($ca, $content->countContentByNodeId($nodeid));
+            } else {
+                $n = 0;
+                foreach($childId as $id) {
+                    $n += $content->countContentByNodeId($id);
+                }
+                array_push($ca, $n);
+            }
+        }
+        return $ca;
+    }
+
+    /**
      * 在nodeid节点下添加内容
      * @return array
      */
