@@ -1,2 +1,2 @@
 MYSQLDUMP=/Applications/XAMPP/bin/mysqldump
-${MYSQLDUMP} -uroot -hlocalhost -p --databases knowledgegraph > knowledgegraph.sql
+${MYSQLDUMP} -uroot -hlocalhost -pLX2017enso --databases knowledgegraph > knowledgegraph.sql

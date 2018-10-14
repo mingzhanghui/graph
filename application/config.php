@@ -236,4 +236,12 @@ return [
         'var_page'  => 'page',
         'list_rows' => 15,
     ],
+
+    'custom' => [
+        // The sitewide hashkey, do not change this because it's used for passwords!
+        // This is for other hash keys... Not sure yet
+        'HASH_GENERAL_KEY' => 'MixitUp200',
+        // This is for database passwords only
+        'HASH_PASSWORD_KEY' => 'catsFLYhigh2000miles',
+    ]
 ];
