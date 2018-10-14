@@ -6,6 +6,7 @@ use app\model\Node;
 use app\model\Link;
 use app\model\Structure;
 use think\Controller;
+use think\Request;
 use think\Response;
 
 class Index extends BaseController {
@@ -29,9 +30,11 @@ class Index extends BaseController {
      * list structure name & content count
      * @return false|static[]
      */
-    public function listStructures() {
-        $list = Structure::all(function($query) {
-            $query->order('id', 'desc');
+    public function listStructures(Request $request) {
+        $userid = $request->get('userid');
+
+        $list = Structure::all(function($query) use ($userid) {
+            $query->where('userid', $userid)->order('id', 'desc');
         });
         foreach ($list as $i => $struct) {
             $structid = $struct->getAttr('id');

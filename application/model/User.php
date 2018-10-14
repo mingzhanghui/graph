@@ -8,6 +8,7 @@
 
 namespace app\model;
 
+use think\Db;
 use think\Model;
 use think\Config;
 
@@ -16,6 +17,34 @@ class User extends Model {
 
     protected $table = 'users';
 
+    protected $autoWriteTimestamp = 'datetime';
+
+    protected $field = ['name', 'email', 'password'];
+
+    // 定义时间戳字段名
+    protected $createTime = 'created_at';
+    protected $updateTime = 'updated_at';
+
+    /**
+     * @param $name
+     * @return bool
+     */
+    public function nameExists($name) {
+        return Db::table($this->table)->where('name',$name)->count() > 0;
+    }
+
+    /**
+     * @param $email
+     * @return bool
+     */
+    public function emailExists($email) {
+        return Db::table($this->table)->where('email', $email)->count() > 0;
+    }
+
+    /**
+     * @param $pwd string
+     * @return string
+     */
     public static function encryptPassword($pwd) {
         $salt = Config::get('custom.HASH_PASSWORD_KEY');
         return self::hashCreate('sha1', $pwd, $salt);

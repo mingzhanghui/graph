@@ -11,6 +11,6 @@ use think\Model;
 
 class Structure extends Model {
     protected $pk = 'id';
-    protected $field = ['id', 'name', 'info'];
+    protected $field = ['id', 'name', 'info', 'userid'];
 
 }
