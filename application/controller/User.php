@@ -53,6 +53,7 @@ class User extends BaseController {
         $user->save();
 
         $ret['data'] = $user->getLastInsID();
+
         return $ret;
     }
 
@@ -63,17 +64,24 @@ class User extends BaseController {
         $user = UserModel::get(function($query) use ($name) {
             $query->where('name', $name);
         });
-        if (strcmp($user->encryptPassword($password), $user->password) === 0) {
-            Cookie::set('kg_username', $user->name);
-            Cookie::set('kg_userid', $user->id);
-            return ['code' => 0, 'data'=>$user->id, 'msg' => '登录成功'];
+        if (is_null($user)) {
+            return ['code' => 2, 'data'=>null, 'msg' => '用户名不存在'];
         }
-        return ['code'=>1, 'data'=>0, 'msg'=> '用户名或密码错误'];
+        $data = [
+            'userid' => $user->id,
+            'username' => $user->name
+        ];
+        if (strcmp($user->encryptPassword($password), $user->password) === 0) {
+            Cookie::set('ng_username', $user->name);
+            Cookie::set('ng_userid', $user->id);
+            return ['code' => 0, 'data'=>$data, 'msg' => '登录成功'];
+        }
+        return ['code'=>1, 'data'=>$data, 'msg'=> '用户名或密码错误'];
     }
 
     public function logout(Request $request) {
-        Cookie::delete('kg_username');
-        Cookie::delete('kg_userid');
+        Cookie::delete('ng_username');
+        Cookie::delete('ng_userid');
         return ['code' => 0, 'msg' => '注销登录'];
     }
 

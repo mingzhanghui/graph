@@ -1,8 +1,8 @@
 -- MySQL dump 10.16  Distrib 10.1.31-MariaDB, for osx10.6 (i386)
 --
--- Host: 47.93.27.106    Database: knowledgegraph
+-- Host: localhost    Database: knowledgegraph
 -- ------------------------------------------------------
--- Server version	10.1.34-MariaDB
+-- Server version	10.1.31-MariaDB
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -125,7 +125,7 @@ CREATE TABLE `structure` (
 
 LOCK TABLES `structure` WRITE;
 /*!40000 ALTER TABLE `structure` DISABLE KEYS */;
-INSERT INTO `structure` VALUES (1,'PHP','PHP是一种通用开源脚本语言，语法吸收了C、Java和Perl的特点，利于学习，使用广泛，主要适用于Web开发领域。它支持几乎所有流行的数',1),(5,'Java','Java 教程 Java 是由Sun Microsystems公司于1995年5月推出的高级程序设计语言。 Java可运行于多个平台,如Windows, Mac OS,及其他多种UNIX版本的系统。',1),(6,'过把瘾','',2),(7,'Powerbuilder','Powerbuilder为什么会没落？现在有那种工具可以替代PB做数据库开发？',1),(8,'C#','C# 是一个简单的、现代的、通用的、面向对象的编程语言，它是由微软（Microsoft）开发的。',1),(9,'test','11111',1),(10,'m12341324','12341324',1),(11,'asdfasdfasdf','xxxxx',1),(13,'basdfadsf','12341234',1),(14,'C#111','asdfads',1),(15,'Java2','1234132',1);
+INSERT INTO `structure` VALUES (1,'PHP','PHP是一种通用开源脚本语言，语法吸收了C、Java和Perl的特点，利于学习，使用广泛，主要适用于Web开发领域。它支持几乎所有流行的数',1),(5,'Java','Java 教程 Java 是由Sun Microsystems公司于1995年5月推出的高级程序设计语言。 Java可运行于多个平台,如Windows, Mac OS,及其他多种UNIX版本的系统。',1),(6,'过把瘾','',1),(7,'Powerbuilder','Powerbuilder为什么会没落？现在有那种工具可以替代PB做数据库开发？',1),(8,'C#','C# 是一个简单的、现代的、通用的、面向对象的编程语言，它是由微软（Microsoft）开发的。',1),(9,'test','11111',1),(10,'m12341324','12341324',1),(11,'asdfasdfasdf','xxxxx',1),(13,'basdfadsf','12341234',1),(14,'C#111','asdfads',1),(15,'Java2','1234132',1);
 /*!40000 ALTER TABLE `structure` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -144,9 +144,8 @@ CREATE TABLE `users` (
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `idx_user_name` (`name`),
-  KEY `idx_user_email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COMMENT='用户登录表';
+  KEY `idx_user_name` (`name`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='用户登录表';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -155,7 +154,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'mingzhanghui','70b6c65690004da65480e78a97c6c3d2c9067bdf','1335250574@qq.com','2018-10-14 21:15:26','2018-10-14 21:15:26'),(5,'mingzhanghui2','70b6c65690004da65480e78a97c6c3d2c9067bdf','mingzhanghui9112@icloud.com','2018-10-14 21:15:09','2018-10-14 21:15:09'),(7,'chuifa','5f7333bd58eb4d1a6897f26c52eb3993172563a8','chuifa@163.net','2018-10-14 21:28:11','2018-10-14 21:28:11');
+INSERT INTO `users` VALUES (1,'mingzhanghui','70b6c65690004da65480e78a97c6c3d2c9067bdf','1335250574@qq.com','2018-11-10 17:25:09','2018-11-10 17:25:09');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -168,4 +167,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-10-14 22:40:26
+-- Dump completed on 2018-11-13 22:38:46

@@ -19,7 +19,7 @@ class User extends Model {
 
     protected $autoWriteTimestamp = 'datetime';
 
-    protected $field = ['name', 'email', 'password'];
+    protected $field = ['id', 'name', 'email', 'password'];
 
     // 定义时间戳字段名
     protected $createTime = 'created_at';

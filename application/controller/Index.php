@@ -6,11 +6,16 @@ use app\model\Node;
 use app\model\Link;
 use app\model\Structure;
 use think\Controller;
+use think\Cookie;
 use think\Request;
 use think\Response;
 
 class Index extends BaseController {
     private $structid;  // 当前的知识图谱ID (structure id)
+
+    public function __construct(Request $request) {
+        parent::__construct($request);
+    }
 
     public function _initialize() {
         parent::_initialize();
