@@ -298,6 +298,17 @@ class Index extends BaseController {
      * 创建知识图谱
      */
     public function createStructure() {
+        $userid = $this->request->param('userid');
+        if (!$userid) {
+            return [
+                'status' => 2,
+                'id'    => -1,
+                'title' => '',
+                'err'   => 'need login',
+                'url'   => 'javascript:;'
+            ];
+        }
+
         $data = $this->request->param('treedata');
         $tree = json_decode($data, true);
 
@@ -317,6 +328,7 @@ class Index extends BaseController {
         $struct = new Structure();
         $struct->name = $rootname;
         $struct->info = $tree['description'];
+        $struct->userid = $userid;
         $struct->save();
         $structid = $struct->id;
 
